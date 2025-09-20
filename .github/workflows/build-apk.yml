@@ -1,0 +1,52 @@
+# Nom du workflow qui apparaîtra dans l'onglet "Actions" de GitHub
+name: Build Flutter APK
+
+# Déclencheur : quand lancer ce workflow ?
+on:
+  # Permet de le lancer manuellement depuis l'interface GitHub
+  workflow_dispatch:
+
+# Les tâches à exécuter
+jobs:
+  build:
+    # La machine virtuelle sur laquelle le travail sera fait
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupère votre code depuis le dépôt GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Installe Java (nécessaire pour la compilation Android)
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Installe Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.25.0' # <-- VERSION MISE À JOUR
+          channel: 'stable'
+          cache: true # Met en cache les dépendances Flutter pour accélérer les builds futurs
+
+      # 4. Récupère les dépendances de votre projet
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      # 5. Nettoie le projet (bonne pratique)
+      - name: Clean Flutter project
+        run: flutter clean
+
+      # 6. Construit l'APK en mode "release"
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 7. Met l'APK généré à disposition pour le téléchargement
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release # Nom du fichier zip que vous téléchargerez
+          path: build/app/outputs/flutter-apk/app-release.apk # Chemin vers l'APK généré
