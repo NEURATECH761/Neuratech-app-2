@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // <<< 1. IMPORT AJOUTÉ
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/app_export.dart';
 import '../widgets/custom_error_widget.dart';
 
-// --- INITIALISATION DE SUPABASE ---
-// L'URL de votre projet Supabase
-const String supabaseUrl = 'https://jqzkseucnfibytrmtzv.supabase.co';
-// Votre clé publique (anon key ) que vous avez fournie
-const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxemtza2V1Y25maWJ5dHJtdHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDM4MzUsImV4cCI6MjA3NjU3OTgzNX0.DTdn2ShzCB8shchTaBS27yFEmYq-CNrs4D4I3b6tBms';
-
+// --- LECTURE DES VARIABLES D'ENVIRONNEMENT ---
+// Ces lignes lisent les clés que vous allez configurer sur Vercel.
+// Pour le mobile, elles liront les clés depuis un fichier de configuration.
+const String supabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: 'https://jqzkseucnfibytrmtzv.supabase.co', // <-- Valeur pour le mobile
+ );
+const String supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxemtza2V1Y25maWJ5dHJtdHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDM4MzUsImV4cCI6MjA3NjU3OTgzNX0.DTdn2ShzCB8shchTaBS27yFEmYq-CNrs4D4I3b6tBms', // <-- Valeur pour le mobile
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // --- 2. BLOC D'INITIALISATION DE SUPABASE AJOUTÉ ---
+  // --- INITIALISATION DE SUPABASE ---
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
@@ -29,12 +34,9 @@ void main() async {
   ErrorWidget.builder = (FlutterErrorDetails details) {
     if (!_hasShownError) {
       _hasShownError = true;
-
-      // Reset flag after 3 seconds to allow error widget on new screens
       Future.delayed(Duration(seconds: 5), () {
         _hasShownError = false;
       });
-
       return CustomErrorWidget(
         errorDetails: details,
       );
@@ -43,13 +45,12 @@ void main() async {
   };
 
   // 🚨 CRITICAL: Device orientation lock - DO NOT REMOVE
-  // J'ai simplifié cette partie pour m'assurer que runApp est bien appelé après les initialisations.
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   
   runApp(MyApp());
 }
 
-// --- 3. RACCOURCI GLOBAL POUR SUPABASE AJOUTÉ ---
+// --- RACCOURCI GLOBAL POUR SUPABASE ---
 final supabase = Supabase.instance.client;
 // --- FIN DU RACCOURCI ---
 
