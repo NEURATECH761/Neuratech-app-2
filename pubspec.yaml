@@ -26,6 +26,7 @@ dependencies:
   camera: ^0.10.5+5
   image_picker: ^1.0.4
   permission_handler: ^11.1.0
+  supabase_flutter: ^2.5.0 # <<<=== AJOUT DE LA DÉPENDANCE SUPABASE
 
   universal_html: ^2.2.4
   flutter_launcher_icons: ^0.14.4

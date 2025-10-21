@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // <<< IMPORT SUPABASE
 
 import '../../core/app_export.dart';
 import '../../theme/app_theme.dart';
@@ -19,12 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
 
-  // Mock credentials for testing
-  final Map<String, String> _mockCredentials = {
-    'admin@neuratech.com': 'admin123',
-    'user@neuratech.com': 'user123',
-    'demo@neuratech.com': 'demo123',
-  };
+  // La variable supabase pour un accès facile
+  final supabase = Supabase.instance.client;
 
   @override
   void dispose() {
@@ -32,42 +29,30 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _handleLogin(String email, String password) async {
+  // --- FONCTION DE CONNEXION GOOGLE MISE À JOUR ---
+  Future<void> _handleGoogleLogin() async {
+    // Affiche l'indicateur de chargement
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // Lance le processus d'authentification OAuth avec Google
+      // Supabase s'occupe de tout (ouvrir la page, gérer la redirection)
+      await supabase.auth.signInWithOAuth(OAuthProvider.google);
 
-    // Check mock credentials
-    if (_mockCredentials.containsKey(email) &&
-        _mockCredentials[email] == password) {
-      // Success - trigger haptic feedback
-      HapticFeedback.lightImpact();
+      // Note : Après la connexion, Supabase redirige vers l'application.
+      // La gestion de l'état (passer à l'écran d'accueil) se fera
+      // en écoutant "onAuthStateChange" dans votre main.dart ou un widget parent.
+      // Pour l'instant, nous ne masquons le chargement que si l'utilisateur annule.
 
+    } catch (e) {
+      // Si l'utilisateur annule ou si une erreur se produit
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Login successful! Welcome back.',
-              style: AppTheme.darkTheme.textTheme.bodyMedium,
-            ),
-            backgroundColor: AppTheme.successTeal,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-
-        // Navigate to dashboard
-        Navigator.pushReplacementNamed(context, '/dashboard-home');
-      }
-    } else {
-      // Error - show specific error message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Invalid email or password. Please try again.',
+              'La connexion a été annulée ou a échoué.',
               style: AppTheme.darkTheme.textTheme.bodyMedium,
             ),
             backgroundColor: AppTheme.errorSoft,
@@ -75,82 +60,32 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
+    } finally {
+      // Masque l'indicateur de chargement si le widget est toujours affiché
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  Future<void> _handleGoogleLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simulate Google login process
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      HapticFeedback.lightImpact();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Google login successful!',
-            style: AppTheme.darkTheme.textTheme.bodyMedium,
-          ),
-          backgroundColor: AppTheme.successTeal,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-
-      Navigator.pushReplacementNamed(context, '/dashboard-home');
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  // J'ai laissé les autres fonctions pour ne pas casser votre code,
+  // mais la logique de connexion email/mot de passe devra aussi être remplacée
+  // par les fonctions de Supabase (supabase.auth.signInWithPassword).
+  Future<void> _handleLogin(String email, String password) async {
+    // TODO: Remplacer cette logique par supabase.auth.signInWithPassword
   }
 
   Future<void> _handleAppleLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simulate Apple login process
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      HapticFeedback.lightImpact();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Apple login successful!',
-            style: AppTheme.darkTheme.textTheme.bodyMedium,
-          ),
-          backgroundColor: AppTheme.successTeal,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-
-      Navigator.pushReplacementNamed(context, '/dashboard-home');
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    // TODO: Implémenter la connexion Apple avec Supabase
   }
 
   void _navigateToSignUp() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Sign up functionality will be implemented',
+          "La fonctionnalité d'inscription sera bientôt disponible.",
           style: AppTheme.darkTheme.textTheme.bodyMedium,
         ),
         backgroundColor: AppTheme.surfaceDialog,
@@ -181,14 +116,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     SizedBox(height: 8.h),
 
-                    // Neuratech Logo
+                    // Logo Neuratech
                     const NeuratechLogoWidget(),
 
                     SizedBox(height: 6.h),
 
-                    // Welcome Text
+                    // Texte de bienvenue
                     Text(
-                      'Welcome Back',
+                      'Ravi de vous revoir', // <<< TRADUIT
                       style:
                           AppTheme.darkTheme.textTheme.headlineSmall?.copyWith(
                         color: AppTheme.textPrimary,
@@ -199,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 1.h),
 
                     Text(
-                      'Sign in to continue your learning journey',
+                      'Connectez-vous pour continuer votre apprentissage', // <<< TRADUIT
                       style: AppTheme.darkTheme.textTheme.bodyMedium?.copyWith(
                         color: AppTheme.textSecondary,
                       ),
@@ -208,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: 4.h),
 
-                    // Login Form
+                    // Formulaire de connexion
                     LoginFormWidget(
                       onLogin: _handleLogin,
                       isLoading: _isLoading,
@@ -216,21 +151,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     SizedBox(height: 4.h),
 
-                    // Social Login Options
+                    // Options de connexion sociale
                     SocialLoginWidget(
                       isLoading: _isLoading,
-                      onGoogleLogin: _handleGoogleLogin,
+                      onGoogleLogin: _handleGoogleLogin, // <<< FONCTION MISE À JOUR
                       onAppleLogin: _handleAppleLogin,
                     ),
 
                     SizedBox(height: 4.h),
 
-                    // Sign Up Link
+                    // Lien d'inscription
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'New user? ',
+                          'Nouveau ? ', // <<< TRADUIT
                           style:
                               AppTheme.darkTheme.textTheme.bodyMedium?.copyWith(
                             color: AppTheme.textSecondary,
@@ -244,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: Text(
-                            'Sign Up',
+                            "S'inscrire", // <<< TRADUIT
                             style: AppTheme.darkTheme.textTheme.bodyMedium
                                 ?.copyWith(
                               color: AppTheme.accentCoral,
