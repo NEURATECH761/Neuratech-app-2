@@ -12,7 +12,7 @@ import '../widgets/custom_error_widget.dart';
 const String supabaseUrl = String.fromEnvironment(
   'SUPABASE_URL',
   defaultValue: 'https://jqzkseucnfibytrmtzv.supabase.co', // <-- Valeur pour le mobile
-  );
+   );
 const String supabaseAnonKey = String.fromEnvironment(
   'SUPABASE_ANON_KEY',
   defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxemtza2V1Y25maWJ5dHJtdHp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDM4MzUsImV4cCI6MjA3NjU3OTgzNX0.DTdn2ShzCB8shchTaBS27yFEmYq-CNrs4D4I3b6tBms', // <-- Valeur pour le mobile
@@ -25,9 +25,7 @@ void main() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
-    // 👇 LA CORRECTION EST ICI.
-    // Ceci force l'utilisation de la redirection sécurisée pour le web.
-    authFlowType: AuthFlowType.pkce,
+    // Le paramètre 'authFlowType' a été retiré car PKCE est le comportement par défaut.
   );
   // --- FIN DU BLOC SUPABASE ---
 
