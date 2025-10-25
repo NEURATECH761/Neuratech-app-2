@@ -92,7 +92,7 @@ class AppTheme {
     ),
 
     // Card theme with subtle elevation
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: surfaceCard,
       elevation: 2,
       shadowColor: shadowColor,
@@ -292,7 +292,7 @@ class AppTheme {
     ),
 
     // Tab bar theme for course navigation
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelColor: accentCoral,
       unselectedLabelColor: textSecondary,
       indicatorColor: accentCoral,
@@ -347,7 +347,7 @@ class AppTheme {
     ),
 
     // Dialog theme for modal interactions
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: surfaceDialog,
       elevation: 8,
       shadowColor: shadowColor,
