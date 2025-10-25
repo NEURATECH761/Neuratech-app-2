@@ -38,13 +38,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       // Lance le processus d'authentification OAuth avec Google
-      // Supabase s'occupe de tout (ouvrir la page, gérer la redirection)
-      await supabase.auth.signInWithOAuth(OAuthProvider.google);
+      await supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        // 👇 LA CORRECTION EST ICI.
+        // Remplacez cette URL par l'URL exacte de votre site Vercel si elle est différente.
+        redirectTo: 'https://neuratech-app-2.vercel.app/',
+       );
 
       // Note : Après la connexion, Supabase redirige vers l'application.
       // La gestion de l'état (passer à l'écran d'accueil) se fera
       // en écoutant "onAuthStateChange" dans votre main.dart ou un widget parent.
-      // Pour l'instant, nous ne masquons le chargement que si l'utilisateur annule.
 
     } catch (e) {
       // Si l'utilisateur annule ou si une erreur se produit
