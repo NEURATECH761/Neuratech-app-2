@@ -41,9 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
       await supabase.auth.signInWithOAuth(
         OAuthProvider.google,
         // 👇 LA CORRECTION EST ICI.
-        // Remplacez cette URL par l'URL exacte de votre site Vercel si elle est différente.
-        redirectTo: 'https://neuratech-app-2.vercel.app/',
-       );
+        // L'URL a été mise à jour avec votre lien Vercel final.
+        redirectTo: 'https://neuratech-app-2-k8pe.vercel.app/',
+        );
 
       // Note : Après la connexion, Supabase redirige vers l'application.
       // La gestion de l'état (passer à l'écran d'accueil) se fera
