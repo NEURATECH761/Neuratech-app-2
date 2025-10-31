@@ -21,10 +21,12 @@ const String supabaseAnonKey = String.fromEnvironment(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // --- INITIALISATION DE SUPABASE ---
+  // --- INITIALISATION DE SUPABASE (CORRIGÉE) ---
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
+    // 👇 CORRECTION : Force l'utilisation du protocole PKCE pour le web
+    authFlowType: AuthFlowType.pkce,
   );
   // --- FIN DU BLOC SUPABASE ---
 
@@ -46,7 +48,7 @@ void main() async {
 
   // 🚨 CRITICAL: Device orientation lock - DO NOT REMOVE
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  
+
   runApp(MyApp());
 }
 
