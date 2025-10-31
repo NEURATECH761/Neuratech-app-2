@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // <<< IMPORT SUPABASE
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/app_export.dart';
 import '../../theme/app_theme.dart';
@@ -38,13 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       // Lance le processus d'authentification OAuth avec Google
-      // Supabase s'occupe de tout (ouvrir la page, gérer la redirection)
-      await supabase.auth.signInWithOAuth(OAuthProvider.google);
+      await supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        // 👇 CORRECTION : RETRAIT DU SLASH FINAL POUR MATCH L'URL SUPABASE
+        redirectTo: 'https://neuratech-app-2-k8pe-l5j2uvj83-kakes-projects-594d80df.vercel.app',
+      );
 
       // Note : Après la connexion, Supabase redirige vers l'application.
       // La gestion de l'état (passer à l'écran d'accueil) se fera
       // en écoutant "onAuthStateChange" dans votre main.dart ou un widget parent.
-      // Pour l'instant, nous ne masquons le chargement que si l'utilisateur annule.
 
     } catch (e) {
       // Si l'utilisateur annule ou si une erreur se produit
